@@ -84,7 +84,10 @@
 	async function handleSendVerificationEmail() {
 		emailVerificationPending = true;
 		// Mock send verification email functionality
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await authClient.sendVerificationEmail({
+			email: currentUser.user.email,
+			callbackURL: "/dashboard?emailVerified=success",
+		});
 		toast.success('Verification email sent successfully');
 		emailVerificationPending = false;
 	}
@@ -137,6 +140,12 @@
 	onMount(async () => {
 		const sess = await allSessions;
 		sessions = sess.data;
+		// if email verified success is on urlparams, set emailVerified to true
+		if (new URLSearchParams(window.location.search).get('emailVerified') === 'success') {
+			toast.success('Email verified successfully');
+		}
+
+
 	});
 </script>
 
