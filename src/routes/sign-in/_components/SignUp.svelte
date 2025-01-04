@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 	import { DiscordLogo, Eye, EyeSlash, GithubLogo, GoogleLogo } from 'phosphor-svelte';
-
+	import { authClient } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -13,30 +14,93 @@
 	let confirmPassword = $state('');
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
+	let profileImage: File | null = $state(null);
+	let isLoading = $state(false);
+
+	const convertImageToBase64 = async (file: File): Promise<string> => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	};
+
+	const handleSignUp = async () => {
+		if (password !== confirmPassword) {
+			alert("Passwords don't match!");
+			return;
+		}
+
+		isLoading = true;
+		try {
+			const { data, error } = await authClient.signUp.email({
+				email,
+				password,
+				name: `${firstName} ${lastName}`,
+				image: profileImage ? await convertImageToBase64(profileImage) : undefined
+			}, {
+				onRequest: () => {
+					isLoading = true;
+				},
+				onSuccess: () => {
+					goto('/dashboard');
+				},
+				onError: (ctx) => {
+					alert(ctx.error.message);
+				}
+			});
+
+
+// {
+//   "token": "xMZVj1WzT7p65jSqwNREsaqxLBFoXZ81",
+//   "user": {
+//     "id": "wSZ6mSt41jPy3ntJI9gi9KGJcK9r5l2d",
+//     "email": "robelmezemir@gmail.com",
+//     "name": "robi mez",
+//     "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAQDAwQDAwQEAwQFBAQFBgoHBgYGBg0JCggKDw0QEA8NDw4RExgUERIXEg4PFRwVFxkZGxsbEBQdHx0aHxgaGxr...",
+//     "emailVerified": false,
+//     "createdAt": "2025-01-04T09:06:21.719Z",
+//     "updatedAt": "2025-01-04T09:06:21.719Z"
+//   }
+// }
+			console.log(data, error);
+		} catch (error) {
+			alert('An error occurred during sign up');
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const handleFileChange = (event: Event) => {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			profileImage = input.files[0];
+		}
+	};
 </script>
 
 <Card.Root class="w-full">
-
 	<Card.Header>
 		<Card.Title>Sign Up</Card.Title>
 		<Card.Description>Enter your information to create an account</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form class="space-y-4">
+		<form class="space-y-4" onsubmit={handleSignUp}>
 			<div class="grid grid-cols-2 gap-4">
 				<div class="space-y-2">
 					<Label for="firstName">First name</Label>
-					<Input type="text" id="firstName" placeholder="Max" bind:value={firstName} />
+					<Input type="text" id="firstName" placeholder="Max" bind:value={firstName} required />
 				</div>
 				<div class="space-y-2">
 					<Label for="lastName">Last name</Label>
-					<Input type="text" id="lastName" placeholder="Robinson" bind:value={lastName} />
+					<Input type="text" id="lastName" placeholder="Robinson" bind:value={lastName} required />
 				</div>
 			</div>
 
 			<div class="space-y-2">
 				<Label for="email">Email</Label>
-				<Input type="email" id="email" placeholder="m@example.com" bind:value={email} />
+				<Input type="email" id="email" placeholder="m@example.com" bind:value={email} required />
 			</div>
 
 			<div class="space-y-2">
@@ -47,6 +111,7 @@
 						id="password"
 						placeholder="Password"
 						bind:value={password}
+						required
 					/>
 					<button
 						type="button"
@@ -70,6 +135,7 @@
 						id="confirmPassword"
 						placeholder="Confirm Password"
 						bind:value={confirmPassword}
+						required
 					/>
 					<button
 						type="button"
@@ -88,21 +154,34 @@
 			<div class="space-y-2">
 				<Label for="profileImage">Profile Image (optional)</Label>
 				<div class="flex items-center gap-2">
-					<Button variant="outline" class="w-24">Browse...</Button>
-					<span class="text-sm text-muted-foreground">No file selected.</span>
+					<Button variant="outline" class="w-24" type="button" onclick={() => document.getElementById('profileImage')?.click()}>
+						Browse...
+					</Button>
+					<span class="text-sm text-muted-foreground">
+						{profileImage ? profileImage.name : 'No file selected.'}
+					</span>
+					<input
+						type="file"
+						id="profileImage"
+						accept="image/*"
+						class="hidden"
+						onchange={handleFileChange}
+					/>
 				</div>
 			</div>
 
-			<Button type="submit" class="w-full">Create an account</Button>
+			<Button type="submit" class="w-full" disabled={isLoading}>
+				{isLoading ? 'Creating account...' : 'Create an account'}
+			</Button>
 
 			<div class="grid grid-cols-3 gap-2">
-				<Button variant="outline" class="w-full">
+				<Button variant="outline" class="w-full" type="button">
 					<GithubLogo size={20} />
 				</Button>
-				<Button variant="outline" class="w-full">
+				<Button variant="outline" class="w-full" type="button">
 					<DiscordLogo size={20} />
 				</Button>
-				<Button variant="outline" class="w-full">
+				<Button variant="outline" class="w-full" type="button">
 					<GoogleLogo size={20} />
 				</Button>
 			</div>

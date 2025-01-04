@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		DiscordLogo,
 		Eye,
@@ -14,11 +14,36 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { authClient } from "$lib/auth-client";
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	let email = $state('');
 	let password = $state('');
 	let rememberMe = $state(false);
 	let showPassword = $state(false);
+	let isLoading = $state(false);
+
+	async function handleSignIn() {
+		await authClient.signIn.email({ 
+			email, 
+			password, 
+		}, { 
+			onRequest: () => { 
+				isLoading = true;
+			}, 
+			onSuccess: () => { 
+				toast.success('Signed in successfully');
+				goto('/dashboard');
+			}, 
+			onError: (ctx) => { 
+				toast.error(ctx.error.message);
+			},
+			onSettled: () => {
+				isLoading = false;
+			}
+		});
+	}
 </script>
 
 <Card.Root class="w-full">
@@ -28,10 +53,16 @@
 		<Card.Description>Enter your email below to login to your account</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form class="space-y-4">
+		<form 
+			class="space-y-4" 
+			onsubmit={(e) => {
+				e.preventDefault();
+				handleSignIn();
+			}}
+		>
 			<div class="space-y-2">
 				<Label for="email">Email</Label>
-				<Input type="email" id="email" placeholder="m@example.com" bind:value={email} />
+				<Input type="email" id="email" placeholder="m@example.com" bind:value={email} required />
 			</div>
 
 			<div class="space-y-2">
@@ -47,11 +78,13 @@
 						id="password"
 						placeholder="••••••••••••••"
 						bind:value={password}
+						required
 					/>
 					<button
 						type="button"
 						class="absolute right-2 top-1/2 -translate-y-1/2"
 						onclick={() => (showPassword = !showPassword)}
+						disabled={isLoading}
 					>
 						{#if showPassword}
 							<EyeSlash size={20} />
@@ -74,7 +107,19 @@
 				</label>
 			</div>
 
-			<Button type="submit" class="w-full">Login</Button>
+			<Button type="submit" class="w-full" disabled={isLoading}>
+				{#if isLoading}
+					<span class="flex items-center gap-2">
+						<svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						Signing in...
+					</span>
+				{:else}
+					Login
+				{/if}
+			</Button>
 
 			<div class="grid grid-cols-4 gap-2">
 				<Button variant="outline" class="w-full">

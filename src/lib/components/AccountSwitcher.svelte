@@ -12,16 +12,11 @@
 	import { ChevronDown, LogOut, PlusCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 
-	let open = false;
+	let { session } = $props();
+	let open = $state(false);
+	let currentUser = $derived(session.data.user);
 
-	// Placeholder data - to be replaced with actual data later
-	let currentUser = {
-		name: 'John Doe',
-		image: '',
-		id: '1',
-		email: 'john@example.com'
-	};
-
+	
 	let sessions = [
 		{
 			user: {
