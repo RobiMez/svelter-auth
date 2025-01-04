@@ -41,3 +41,4 @@
 ## Email Verification
 
 - Added email verification with resend
+- Added forget and reset password functionality
