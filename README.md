@@ -42,3 +42,8 @@
 
 - Added email verification with resend
 - Added forget and reset password functionality
+
+## Github Auth
+
+- Added github auth
+- Added github account linking

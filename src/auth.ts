@@ -8,7 +8,12 @@ dotenv.config();
 
 export const auth = betterAuth({
   database: db,
-
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["github"]
+    }
+  },
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url }: { user: { email: string; }, url: string; }) => {
@@ -31,10 +36,10 @@ export const auth = betterAuth({
     },
   },
 
-  // socialProviders: {
-  //   github: {
-  //     clientId: process.env.GITHUB_CLIENT_ID as string,
-  //     clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-  //   }
-  // },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    }
+  },
 });

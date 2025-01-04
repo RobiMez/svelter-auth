@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { toast } from 'svelte-sonner';
 
 	let firstName = $state('');
 	let lastName = $state('');
@@ -34,42 +35,39 @@
 
 		isLoading = true;
 		try {
-			const { data, error } = await authClient.signUp.email({
-				email,
-				password,
-				name: `${firstName} ${lastName}`,
-				image: profileImage ? await convertImageToBase64(profileImage) : undefined
-			}, {
-				onRequest: () => {
-					isLoading = true;
+			const { data, error } = await authClient.signUp.email(
+				{
+					email,
+					password,
+					name: `${firstName} ${lastName}`,
+					image: profileImage ? await convertImageToBase64(profileImage) : undefined
 				},
-				onSuccess: () => {
-					goto('/dashboard');
-				},
-				onError: (ctx) => {
-					alert(ctx.error.message);
+				{
+					onRequest: () => {
+						isLoading = true;
+					},
+					onSuccess: () => {
+						goto('/dashboard');
+					},
+					onError: (ctx) => {
+						alert(ctx.error.message);
+					}
 				}
-			});
+			);
 
-
-// {
-//   "token": "xMZVj1WzT7p65jSqwNREsaqxLBFoXZ81",
-//   "user": {
-//     "id": "wSZ6mSt41jPy3ntJI9gi9KGJcK9r5l2d",
-//     "email": "robelmezemir@gmail.com",
-//     "name": "robi mez",
-//     "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAQDAwQDAwQEAwQFBAQFBgoHBgYGBg0JCggKDw0QEA8NDw4RExgUERIXEg4PFRwVFxkZGxsbEBQdHx0aHxgaGxr...",
-//     "emailVerified": false,
-//     "createdAt": "2025-01-04T09:06:21.719Z",
-//     "updatedAt": "2025-01-04T09:06:21.719Z"
-//   }
-// }
-			console.log(data, error);
 		} catch (error) {
 			alert('An error occurred during sign up');
 		} finally {
 			isLoading = false;
 		}
+	};
+
+	const signInWithGithub = async () => {
+		const data = await authClient.signIn.social({
+			provider: 'github',
+			callbackURL: '/dashboard'
+		});
+		toast.success('Continuing with Github...');
 	};
 
 	const handleFileChange = (event: Event) => {
@@ -154,7 +152,12 @@
 			<div class="space-y-2">
 				<Label for="profileImage">Profile Image (optional)</Label>
 				<div class="flex items-center gap-2">
-					<Button variant="outline" class="w-24" type="button" onclick={() => document.getElementById('profileImage')?.click()}>
+					<Button
+						variant="outline"
+						class="w-24"
+						type="button"
+						onclick={() => document.getElementById('profileImage')?.click()}
+					>
 						Browse...
 					</Button>
 					<span class="text-sm text-muted-foreground">
@@ -174,20 +177,23 @@
 				{isLoading ? 'Creating account...' : 'Create an account'}
 			</Button>
 
-			<div class="grid grid-cols-3 gap-2">
-				<Button variant="outline" class="w-full" type="button">
-					<GithubLogo size={20} />
-				</Button>
-				<Button variant="outline" class="w-full" type="button">
-					<DiscordLogo size={20} />
-				</Button>
-				<Button variant="outline" class="w-full" type="button">
-					<GoogleLogo size={20} />
+			<div class="grid grid-cols-1 gap-2">
+				<Button
+					variant="outline"
+					class="w-full"
+					onclick={() => {
+						signInWithGithub();
+					}}
+				>
+					<GithubLogo size={24} weight="duotone" />
+					Continue with Github
 				</Button>
 			</div>
 
 			<div class="text-center text-xs text-muted-foreground">
-				Secured by <a href="https://better-auth.com" class="font-medium hover:underline">better-auth</a>
+				Secured by <a href="https://better-auth.com" class="font-medium hover:underline"
+					>better-auth</a
+				>
 			</div>
 		</form>
 	</Card.Content>
