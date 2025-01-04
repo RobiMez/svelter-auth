@@ -11,3 +11,23 @@ declare global {
 }
 
 export {};
+
+
+// app.d.ts -------------------------------------------
+// for the option to set the session and user in the locals object
+
+// declare global {
+// 	namespace App {
+// 		interface Locals {
+// 			session: Session | undefined;
+// 			user: User | undefined;
+// 		}
+// 		// interface Error {}
+// 		// interface Locals {}
+// 		// interface PageData {}
+// 		// interface Platform {}
+// 	}
+// }
+
+// export {};
+// -------------------------------------------------------
