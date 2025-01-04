@@ -33,3 +33,11 @@
 - Decided it was shit and started over with shadcn-svelte
 - Turned out to be a very good decision
 - LOTS of changes on this commit but ignore it and look at the next commits for auth implementations
+
+## Added email and password auth
+
+- Added signin signup and signout functionality with email and password
+
+## Email Verification
+
+- Added email verification with resend
