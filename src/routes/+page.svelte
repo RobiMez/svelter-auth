@@ -1,7 +1,10 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
-	import { SignIn } from 'phosphor-svelte';
+	import { Browser, SignIn } from 'phosphor-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { authClient } from '$lib/auth-client';
+
+	const session = authClient.useSession();
 </script>
 
 <div
@@ -40,12 +43,21 @@
 							><span class="link-text">Session Management.</span>
 						</div>
 					</div>
-					<a class="flex justify-center" href="/sign-in">
-						<Button>
-							<SignIn />
-							<span>Sign In</span>
-						</Button>
-					</a>
+					{#if !$session.isPending && $session.data}
+						<a class="flex justify-center" href="/dashboard">
+							<Button>
+								<Browser />
+								<span>Dashboard</span>
+							</Button>
+						</a>
+					{:else}
+						<a class="flex justify-center" href="/sign-in">
+							<Button>
+								<SignIn />
+								<span>Sign In</span>
+							</Button>
+						</a>
+					{/if}
 				</div>
 			</main>
 		</div>

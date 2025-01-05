@@ -179,7 +179,7 @@
 					{#if emailVerificationPending}
 						<Loader2 size={15} class="animate-spin" />
 					{:else}
-						Resend Verification Email
+						Send Verification Email
 					{/if}
 				</Button>
 			</Alert>

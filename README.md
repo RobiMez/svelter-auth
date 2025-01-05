@@ -37,6 +37,7 @@
 ## Added email and password auth
 
 - Added signin signup and signout functionality with email and password
+- Added edit user functionality
 
 ## Email Verification
 
@@ -47,3 +48,4 @@
 
 - Added github auth
 - Added github account linking
+- Added a toast for when betterauth doesnt let you sign in with a private email github account 

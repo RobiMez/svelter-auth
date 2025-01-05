@@ -9,6 +9,8 @@
 		TwitterLogo,
 		WindowsLogo
 	} from 'phosphor-svelte';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
@@ -17,6 +19,13 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+
+	onMount(() => {
+		const error = $page.url.searchParams.get('error');
+		if (error === 'email_not_found') {
+			toast.error('Provider did not return email');
+		}
+	});
 
 	let email = $state('');
 	let password = $state('');

@@ -1,8 +1,10 @@
+import { sendEmail } from "$lib/utils/email-service";
 import { betterAuth } from "better-auth";
+import { passkey } from "better-auth/plugins/passkey";
 import dotenv from "dotenv";
 
 import { db } from "./db";
-import { sendEmail } from "$lib/utils/email";
+
 
 dotenv.config();
 
@@ -42,4 +44,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }
   },
+  plugins: [
+    passkey(),
+  ],
 });
