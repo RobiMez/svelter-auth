@@ -2,14 +2,18 @@ import { sendEmail } from "$lib/utils/email-service";
 import { betterAuth } from "better-auth";
 import { passkey } from "better-auth/plugins/passkey";
 import dotenv from "dotenv";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
 import { db } from "./db";
 
 
 dotenv.config();
+// First ensure database connection
+const dbInstance = await db.getInstance();
 
 export const auth = betterAuth({
-  database: db,
+  database: mongodbAdapter(dbInstance),
+
   account: {
     accountLinking: {
       enabled: true,

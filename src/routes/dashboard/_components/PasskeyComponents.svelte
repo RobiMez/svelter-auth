@@ -6,6 +6,7 @@
     import * as Table from "$lib/components/ui/table";
     import { Fingerprint, Loader2, Plus, Trash } from "lucide-svelte";
     import { toast } from "svelte-sonner";
+	import { authClient } from "$lib/auth-client";
 
     // Mock data
     let passkeys = $state([
@@ -24,8 +25,9 @@
             return;
         }
         isAddingPasskey = true;
-        // Mock add passkey functionality
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const data = await authClient.passkey.addPasskey({
+            name: passkeyName
+        });
         toast.success("Passkey added successfully");
         isAddingPasskey = false;
         addPasskeyOpen = false;

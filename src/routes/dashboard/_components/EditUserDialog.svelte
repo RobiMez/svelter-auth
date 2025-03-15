@@ -31,10 +31,12 @@
 		isLoading = true;
 		if (!name) {
 			toast.error('Name is required');
+            isLoading = false;
 			return;
 		}
 		if (!image) {
 			toast.error('Image is required');
+            isLoading = false;
 			return;
 		}
 		await authClient.updateUser({

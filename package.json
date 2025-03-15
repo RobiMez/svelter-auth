@@ -44,7 +44,9 @@
 	},
 	"dependencies": {
 		"better-auth": "^1.1.8",
+		"chalk": "^5.4.1",
 		"dotenv": "^16.4.7",
+		"mongoose": "^8.12.1",
 		"pg": "^8.13.1",
 		"phosphor-svelte": "^3.0.1",
 		"qrious": "^4.0.2",

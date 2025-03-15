@@ -48,4 +48,9 @@
 
 - Added github auth
 - Added github account linking
-- Added a toast for when betterauth doesnt let you sign in with a private email github account 
+- Added a toast for when betterauth doesnt let you sign in with a private email github account
+
+## Switched to mongodb
+
+- Added mongodb adapter
+- added chalk for logging
