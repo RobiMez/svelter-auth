@@ -24,6 +24,7 @@
 							class="italic underline">better-auth's</a
 						>
 						features and capabilities. <br />
+			
 					</p>
 				</div>
 				<div class="flex w-full flex-col gap-4 md:w-10/12">
@@ -41,6 +42,8 @@
 							><span class="link-text">Roles &amp; Permissions.</span><span class="link-text"
 								>Rate Limiting.</span
 							><span class="link-text">Session Management.</span>
+
+							
 						</div>
 					</div>
 					{#if !$session.isPending && $session.data}
@@ -58,6 +61,9 @@
 							</Button>
 						</a>
 					{/if}
+					<a href="https://github.com/robimez/svelter-auth" target="_blank" class="text-xs text-primary text-center underline">
+						View the code on GitHub
+					</a>
 				</div>
 			</main>
 		</div>
